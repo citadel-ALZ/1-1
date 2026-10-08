@@ -535,7 +535,7 @@ hub_virtual_networks = {
 
 # private_link_private_dns_zone_virtual_network_link_moved_blocks_enabled = true
 
-enable_telemetry = true
+enable_telemetry = false
 telemetry_additional_content = {
   deployed_by    = "alz-terraform-accelerator"
   correlation_id = "00000000-0000-0000-0000-000000000000"
