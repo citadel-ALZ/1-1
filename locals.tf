@@ -57,9 +57,16 @@ locals {
 }
 
 locals {
-  # Remove keys if subscription_id is not a valid GUID, i.e. null or empty string
+  subscription_placement = module.config.outputs.management_group_settings.subscription_placement
+
+  # Keep only valid GUIDs and one placement per subscription ID.
   subscription_placement_filtered = {
-    for k, v in module.config.outputs.management_group_settings.subscription_placement : k => v
-    if can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", v.subscription_id))
+    for k, v in local.subscription_placement : k => v
+    if can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", v.subscription_id)) &&
+    k == try([
+      for priority_key in ["management", "connectivity", "identity", "security"] :
+      priority_key
+      if try(local.subscription_placement[priority_key].subscription_id, null) == v.subscription_id
+    ][0], null)
   }
 }
